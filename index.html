@@ -25,7 +25,7 @@
 </head>
 <body>
   <h1>beats by αυθόρμητα</h1>
-  <audio id="player" autoplay muted loop></audio>
+  <audio id="player" muted loop></audio>
   <br />
   <button id="muteBtn">Unmute 🔊</button>
 
@@ -38,7 +38,6 @@
       "beat5.mp3",
       "beat6.mp3",
       "beat7.mp3",
-      "beat8.mp3"
     ];
 
     function shuffle(array) {
@@ -52,8 +51,10 @@
 
     function playNext() {
       player.src = playlist[current];
-      player.play().catch(() => {
-        console.log("Autoplay blocked by browser");
+      player.play().then(() => {
+        console.log("Playing", player.src);
+      }).catch(err => {
+        console.warn("Autoplay blocked:", err);
       });
     }
 
@@ -67,7 +68,10 @@
       muteBtn.innerText = player.muted ? "Unmute 🔊" : "Mute 🔇";
     });
 
-    playNext(); // start playing
+    // μικρή καθυστέρηση για να το δεχτεί ο browser
+    setTimeout(() => {
+      playNext();
+    }, 500);
   </script>
 </body>
 </html>
