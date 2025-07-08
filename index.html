@@ -1,43 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>beats</title>
-  </head>
-  <body style="background:black; color:white; text-align:center;">
-    <h1>Beats by αυθόρμητα</h1>
-    <audio id="player" controls autoplay loop></audio>
+<head>
+  <meta charset="UTF-8" />
+  <title>Beats by αυθόρμητα</title>
+  <style>
+    body {
+      background-color: #000;
+      color: orange;
+      font-family: sans-serif;
+      text-align: center;
+      padding-top: 50px;
+    }
+    #muteBtn {
+      background: orange;
+      color: black;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Beats by αυθόρμητα</h1>
+  <audio id="player" autoplay loop></audio>
+  <br />
+  <button id="muteBtn">Mute</button>
 
-    <script>
-      const beats = [
-        "beat1.mp3",
-        "beat2.mp3",
-        "beat3.mp3",
-        "beat4.mp3",
-        "beat5.mp3",
-        "beat6.mp3",
-        "beat7.mp3"
-      ];
-      const player = document.getElementById("player");
+  <script>
+    const beats = [
+      'beat1.mp3',
+      'beat2.mp3',
+      'beat3.mp3',
+      'beat4.mp3',
+      'beat5.mp3',
+      'beat6.mp3',
+      'beat7.mp3'
+    ];
+    
+    const player = document.getElementById('player');
+    const muteBtn = document.getElementById('muteBtn');
 
-      function shuffle(array) {
-        return array.sort(() => Math.random() - 0.5);
-      }
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
 
-      const playlist = shuffle(beats);
-      let current = 0;
+    const shuffledBeats = shuffle(beats);
+    let current = 0;
 
-      function playNext() {
-        player.src = playlist[current];
-        player.play();
-      }
-
-      player.addEventListener("ended", () => {
-        current = (current + 1) % playlist.length;
-        playNext();
+    function playBeat(index) {
+      player.src = shuffledBeats[index];
+      player.play().catch(() => {
+        console.log("Autoplay blocked. User interaction required.");
       });
+    }
 
-      playNext();
-    </script>
-  </body>
+    player.addEventListener('ended', () => {
+      current = (current + 1) % shuffledBeats.length;
+      playBeat(current);
+    });
+
+    muteBtn.addEventListener('click', () => {
+      player.muted = !player.muted;
+      muteBtn.innerText = player.muted ? 'Unmute' : 'Mute';
+    });
+
+    playBeat(current);
+  </script>
+</body>
 </html>
