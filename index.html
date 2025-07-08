@@ -1,33 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="el">
 <head>
   <meta charset="UTF-8" />
-  <title>Beats by αυθόρμητα</title>
+  <title>beats by αυθόρμητα</title>
   <style>
     body {
       background-color: #000;
       color: orange;
       font-family: monospace;
-      text-align: center;
-      padding-top: 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-    #muteBtn {
-      background: orange;
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: orange;
       color: black;
       font-weight: bold;
-      padding: 10px 20px;
       border: none;
-      border-radius: 6px;
+      padding: 10px 20px;
+      border-radius: 5px;
       cursor: pointer;
-      margin-top: 20px;
+      font-size: 1.2em;
     }
   </style>
 </head>
 <body>
   <h1>beats by αυθόρμητα</h1>
-  <audio id="player" muted loop></audio>
-  <br />
   <button id="muteBtn">Unmute 🔊</button>
+
+  <audio id="player" preload="auto"></audio>
 
   <script>
     const beats = [
@@ -37,41 +47,35 @@
       "beat4.mp3",
       "beat5.mp3",
       "beat6.mp3",
-      "beat7.mp3",
+      "beat7.mp3"
     ];
 
-    function shuffle(array) {
-      return array.sort(() => Math.random() - 0.5);
-    }
+    let index = Math.floor(Math.random() * beats.length);
+    const player = document.getElementById('player');
+    const muteBtn = document.getElementById('muteBtn');
 
-    const playlist = shuffle([...beats]);
-    let current = 0;
-    const player = document.getElementById("player");
-    const muteBtn = document.getElementById("muteBtn");
+    let isMuted = true;
 
     function playNext() {
-      player.src = playlist[current];
-      player.play().then(() => {
-        console.log("Playing", player.src);
-      }).catch(err => {
-        console.warn("Autoplay blocked:", err);
-      });
+      index = (index + 1) % beats.length;
+      player.src = beats[index];
+      player.play();
     }
 
-    player.addEventListener("ended", () => {
-      current = (current + 1) % playlist.length;
-      playNext();
+    muteBtn.addEventListener('click', () => {
+      if (isMuted) {
+        player.src = beats[index];
+        player.play();
+        muteBtn.textContent = "Mute 🔇";
+        isMuted = false;
+      } else {
+        player.pause();
+        muteBtn.textContent = "Unmute 🔊";
+        isMuted = true;
+      }
     });
 
-    muteBtn.addEventListener("click", () => {
-      player.muted = !player.muted;
-      muteBtn.innerText = player.muted ? "Unmute 🔊" : "Mute 🔇";
-    });
-
-    // μικρή καθυστέρηση για να το δεχτεί ο browser
-    setTimeout(() => {
-      playNext();
-    }, 500);
+    player.addEventListener('ended', playNext);
   </script>
 </body>
 </html>
