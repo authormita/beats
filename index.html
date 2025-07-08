@@ -1,81 +1,83 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>beats by αυθόρμητα</title>
   <style>
     body {
       background-color: #000;
       color: orange;
       font-family: monospace;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+      text-align: center;
+      margin-top: 100px;
     }
-
-    h1 {
-      font-size: 2em;
-      margin-bottom: 20px;
-    }
-
     button {
-      background-color: orange;
-      color: black;
-      font-weight: bold;
+      background: orange;
       border: none;
+      color: black;
       padding: 10px 20px;
-      border-radius: 5px;
+      font-weight: bold;
+      font-size: 16px;
       cursor: pointer;
-      font-size: 1.2em;
+      border-radius: 6px;
+    }
+    audio {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h1>beats by αυθόρμητα</h1>
-  <button id="muteBtn">Unmute 🔊</button>
 
-  <audio id="player" preload="auto"></audio>
+  <h1>beats by αυθόρμητα</h1>
+  <button id="muteButton">Unmute 🔊</button>
+
+  <audio id="player" autoplay></audio>
 
   <script>
-    const beats = [
-      "beat1.mp3",
-      "beat2.mp3",
-      "beat3.mp3",
-      "beat4.mp3",
-      "beat5.mp3",
-      "beat6.mp3",
-      "beat7.mp3"
+    const tracks = [
+      'beat1.mp3',
+      'beat2.mp3',
+      'beat3.mp3',
+      'beat4.mp3',
+      'beat5.mp3',
+      'beat6.mp3',
+      'beat7.mp3'
     ];
 
-    let index = Math.floor(Math.random() * beats.length);
-    const player = document.getElementById('player');
-    const muteBtn = document.getElementById('muteBtn');
+    let currentTrack = 0;
+    const audio = document.getElementById('player');
+    const muteButton = document.getElementById('muteButton');
 
-    let isMuted = true;
-
-    function playNext() {
-      index = (index + 1) % beats.length;
-      player.src = beats[index];
-      player.play();
+    // Shuffle tracks
+    for (let i = tracks.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [tracks[i], tracks[j]] = [tracks[j], tracks[i]];
     }
 
-    muteBtn.addEventListener('click', () => {
-      if (isMuted) {
-        player.src = beats[index];
-        player.play();
-        muteBtn.textContent = "Mute 🔇";
-        isMuted = false;
-      } else {
-        player.pause();
-        muteBtn.textContent = "Unmute 🔊";
-        isMuted = true;
-      }
+    // Load first track
+    function loadTrack(index) {
+      audio.src = tracks[index];
+      audio.load();
+      audio.play().catch(() => {}); // prevent autoplay block
+    }
+
+    loadTrack(currentTrack);
+
+    // Move to next track when one ends
+    audio.addEventListener('ended', () => {
+      currentTrack = (currentTrack + 1) % tracks.length;
+      loadTrack(currentTrack);
     });
 
-    player.addEventListener('ended', playNext);
+    // Mute toggle
+    muteButton.addEventListener('click', () => {
+      audio.muted = !audio.muted;
+      muteButton.textContent = audio.muted ? 'Unmute 🔇' : 'Mute 🔊';
+    });
+
+    // Initially muted
+    audio.muted = true;
   </script>
+
 </body>
-</html>
