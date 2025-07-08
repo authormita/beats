@@ -7,66 +7,67 @@
     body {
       background-color: #000;
       color: orange;
-      font-family: sans-serif;
+      font-family: monospace;
       text-align: center;
-      padding-top: 50px;
+      padding-top: 80px;
     }
     #muteBtn {
       background: orange;
       color: black;
+      font-weight: bold;
       padding: 10px 20px;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
       margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>Beats by αυθόρμητα</h1>
-  <audio id="player" autoplay loop></audio>
+  <h1>beats by αυθόρμητα</h1>
+  <audio id="player" autoplay muted loop></audio>
   <br />
-  <button id="muteBtn">Mute</button>
+  <button id="muteBtn">Unmute 🔊</button>
 
   <script>
     const beats = [
-      'beat1.mp3',
-      'beat2.mp3',
-      'beat3.mp3',
-      'beat4.mp3',
-      'beat5.mp3',
-      'beat6.mp3',
-      'beat7.mp3'
+      "beat1.mp3",
+      "beat2.mp3",
+      "beat3.mp3",
+      "beat4.mp3",
+      "beat5.mp3",
+      "beat6.mp3",
+      "beat7.mp3",
+      "beat8.mp3"
     ];
-    
-    const player = document.getElementById('player');
-    const muteBtn = document.getElementById('muteBtn');
 
     function shuffle(array) {
       return array.sort(() => Math.random() - 0.5);
     }
 
-    const shuffledBeats = shuffle(beats);
+    const playlist = shuffle([...beats]);
     let current = 0;
+    const player = document.getElementById("player");
+    const muteBtn = document.getElementById("muteBtn");
 
-    function playBeat(index) {
-      player.src = shuffledBeats[index];
+    function playNext() {
+      player.src = playlist[current];
       player.play().catch(() => {
-        console.log("Autoplay blocked. User interaction required.");
+        console.log("Autoplay blocked by browser");
       });
     }
 
-    player.addEventListener('ended', () => {
-      current = (current + 1) % shuffledBeats.length;
-      playBeat(current);
+    player.addEventListener("ended", () => {
+      current = (current + 1) % playlist.length;
+      playNext();
     });
 
-    muteBtn.addEventListener('click', () => {
+    muteBtn.addEventListener("click", () => {
       player.muted = !player.muted;
-      muteBtn.innerText = player.muted ? 'Unmute' : 'Mute';
+      muteBtn.innerText = player.muted ? "Unmute 🔊" : "Mute 🔇";
     });
 
-    playBeat(current);
+    playNext(); // start playing
   </script>
 </body>
 </html>
